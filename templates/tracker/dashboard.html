@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - SpendWise{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h2>Dashboard</h2>
+
+  <form method="get" class="filter-form">
+    <input type="month" name="month" id="month-input" value="{{ month_value }}">
+    <button type="submit" class="btn btn-small">Show</button>
+  </form>
+</div>
+
+<section class="stats">
+  <div class="card stat">
+    <span class="stat-label">Total spent</span>
+    <span class="stat-value">₹{{ total }}</span>
+  </div>
+
+  <div class="card stat">
+    <span class="stat-label">Expenses</span>
+    <span class="stat-value">{{ count }}</span>
+  </div>
+
+  <div class="card stat">
+    <span class="stat-label">Top category</span>
+    <span class="stat-value">{{ top_category }}</span>
+  </div>
+</section>
+
+<!-- Monthly Budget -->
+<section class="card" style="margin-top: 20px;">
+  <h3>Monthly Budget</h3>
+
+  {% if budget_set %}
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-label">Budget</span>
+        <span class="stat-value">₹{{ budget_amount }}</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Spent</span>
+        <span class="stat-value">₹{{ total }}</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">
+          {% if remaining >= 0 %}
+            Remaining
+          {% else %}
+            Over budget
+          {% endif %}
+        </span>
+
+        <span class="stat-value">
+          {% if remaining >= 0 %}
+            ₹{{ remaining }}
+          {% else %}
+            ₹{{ remaining|stringformat:"s"|slice:"1:" }}
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    {% if budget_warning == "over" %}
+  <p>
+    🚨 You have exceeded your monthly budget by
+    ₹{{ remaining|stringformat:"s"|slice:"1:" }}.
+  </p>
+
+{% elif budget_warning == "warning" %}
+  <p>
+    ⚠️ You have used 80% or more of your monthly budget.
+    ₹{{ remaining }} remaining.
+  </p>
+
+{% else %}
+  <p class="muted">
+    You have ₹{{ remaining }} remaining for this month.
+  </p>
+{% endif %}
+
+  {% else %}
+    <p class="muted">
+      No budget set for this month.
+    </p>
+
+    <p>
+      Your total spending this month is ₹{{ total }}.
+    </p>
+  {% endif %}
+</section>
+
+<section class="grid-2">
+
+  <div class="card">
+    <h3>Spending by category</h3>
+
+    {% if by_category %}
+      <canvas
+        id="categoryChart"
+        data-url="{% url 'chart_data' %}"
+        data-month="{{ month_value }}">
+      </canvas>
+
+      <table class="table">
+        {% for row in by_category %}
+          <tr>
+            <td>{{ row.category__name }}</td>
+            <td class="right">₹{{ row.total }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted">
+        No expenses this month.
+        <a href="{% url 'expense_create' %}">Add one</a>.
+      </p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Recent expenses</h3>
+
+    {% if recent %}
+      <table class="table">
+        {% for e in recent %}
+          <tr>
+            <td>
+              {{ e.title }}<br>
+              <small class="muted">
+                {{ e.category }} · {{ e.date|date:"d M" }}
+              </small>
+            </td>
+
+            <td class="right">₹{{ e.amount }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted">Nothing yet.</p>
+    {% endif %}
+  </div>
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
