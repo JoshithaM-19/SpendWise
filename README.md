@@ -4,6 +4,17 @@
 
 SpendWise is a beginner-friendly Django web application that helps users manage their personal expenses, monitor monthly spending, set a monthly budget, search expenses, and export expense data as a CSV file.
 
+## 📸 Screenshots
+
+### Dashboard
+![SpendWise Dashboard](screenshots/dashboard.jpg)
+
+### Expenses
+![SpendWise Expenses](screenshots/expenses.jpg)
+
+### Budget & Spending Chart
+![SpendWise Budget](screenshots/budget.jpg)
+
 ## Features
 
 - User registration and login
