@@ -52,7 +52,7 @@ SpendWise is a beginner-friendly Django web application that helps users manage 
 ### 1. Clone the repository
 
 ```bash
-git clone <your-github-repository-url>
+git clone https://github.com/JoshithaM-19/SpendWise.git
 cd spendwise
 ```
 
